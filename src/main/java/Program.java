@@ -25,7 +25,7 @@ public class Program {
                 var message = event.getMessage();
                 if (!message.getContent().startsWith(PREFIX + "qr")) return Mono.empty();
                 var qr = QrCode.encodeText(message.getContent().substring(PREFIX.length()+"qr".length()+1), QrCode.Ecc.MEDIUM);
-                var conversionResult = new QrToByteArrayInputStream().convert(qr, QR_SCALE, QR_BORDER);
+                var conversionResult = new QrToByteArrayInputStream().convert(qr, QR_SCALE, QR_BORDER, "png");
                 return conversionResult
                         .map(inputStream -> message
                                 .getChannel()
