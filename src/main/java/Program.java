@@ -11,6 +11,8 @@ import java.util.Optional;
 public class Program {
 
     private static final String PREFIX = "!";
+    private static final int QR_SCALE = 4;
+    private static final int QR_BORDER = 1;
 
     public static void main(String[] args) throws Exception {
         var token = Optional.ofNullable(System.getenv("TOKEN")).orElseThrow(() -> new Exception("Bot token not found."));
@@ -23,7 +25,7 @@ public class Program {
                 var message = event.getMessage();
                 if (!message.getContent().startsWith(PREFIX + "qr")) return Mono.empty();
                 var qr = QrCode.encodeText(message.getContent().substring(PREFIX.length()+"qr".length()+1), QrCode.Ecc.MEDIUM);
-                var conversionResult = new QrToByteArrayInputStream().convert(qr);
+                var conversionResult = new QrToByteArrayInputStream().convert(qr, QR_SCALE, QR_BORDER);
                 return conversionResult
                         .map(inputStream -> message
                                 .getChannel()
