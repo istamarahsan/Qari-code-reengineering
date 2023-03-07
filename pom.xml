@@ -25,16 +25,6 @@
             <artifactId>qrcodegen</artifactId>
             <version>1.8.0</version>
         </dependency>
-        <dependency>
-            <groupId>io.vavr</groupId>
-            <artifactId>vavr</artifactId>
-            <version>1.0.0-alpha-4</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jooq</groupId>
-            <artifactId>jooq</artifactId>
-            <version>3.17.8</version>
-        </dependency>
     </dependencies>
 
     <build>
