@@ -5,14 +5,12 @@ import discord4j.core.spec.MessageCreateFields;
 import io.nayuki.qrcodegen.QrCode;
 import reactor.core.publisher.Mono;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 public class SlashCommandHandler {
     private static final int QR_SCALE = 4;
     private static final int QR_BORDER = 1;
-    private final Map<String, String> savedContent = new HashMap<>();
+    private final QrData qrData = new QrData();
 
     public Mono<Void> handle(ChatInputInteractionEvent event) {
         if (!event.getCommandName()
@@ -45,7 +43,7 @@ public class SlashCommandHandler {
                 .ifPresent(c -> event.getOption("name")
                         .flatMap(ApplicationCommandInteractionOption::getValue)
                         .map(ApplicationCommandInteractionOptionValue::asString)
-                        .ifPresent(n -> savedContent.put(n, c)));
+                        .ifPresent(n -> qrData.store(n, c)));
         return event.reply()
                 .withContent("OK")
                 .then();
@@ -55,7 +53,7 @@ public class SlashCommandHandler {
         return event.getOption("name")
                 .flatMap(ApplicationCommandInteractionOption::getValue)
                 .map(ApplicationCommandInteractionOptionValue::asString)
-                .flatMap(name -> Optional.ofNullable(savedContent.getOrDefault(name, null)))
+                .flatMap(name -> Optional.ofNullable(qrData.savedData.getOrDefault(name, null)))
                 .map(content -> QrCode.encodeText(content, QrCode.Ecc.LOW))
                 .flatMap(qr -> new QrToByteArrayInputStream().convert(qr, QR_SCALE, QR_BORDER, "png"))
                 .map(inputStream -> event.reply()
