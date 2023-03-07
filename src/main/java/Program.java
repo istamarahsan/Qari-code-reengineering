@@ -68,8 +68,34 @@ public class Program {
                         .required(true)
                         .build())
                 .build();
+        var qrSaveRequest = ApplicationCommandRequest.builder()
+                .name("qrsave")
+                .description("save a QR with a name")
+                .addOption(ApplicationCommandOptionData.builder()
+                        .name("text")
+                        .description("text to encode")
+                        .type(ApplicationCommandOption.Type.STRING.getValue())
+                        .required(true)
+                        .build())
+                .addOption(ApplicationCommandOptionData.builder()
+                        .name("name")
+                        .description("a unique name to save your QR")
+                        .type(ApplicationCommandOption.Type.STRING.getValue())
+                        .required(true)
+                        .build())
+                .build();
+        var qrLoadRequest = ApplicationCommandRequest.builder()
+                .name("qrload")
+                .description("load a saved QR")
+                .addOption(ApplicationCommandOptionData.builder()
+                        .name("name")
+                        .description("the name of your saved QR")
+                        .type(ApplicationCommandOption.Type.STRING.getValue())
+                        .required(true)
+                        .build())
+                .build();
         client.getApplicationService()
-                .bulkOverwriteGlobalApplicationCommand(appId, List.of(qrCommandRequest))
+                .bulkOverwriteGlobalApplicationCommand(appId, List.of(qrCommandRequest, qrSaveRequest, qrLoadRequest))
                 .subscribe();
     }
 }
