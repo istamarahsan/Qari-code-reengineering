@@ -1,14 +1,10 @@
 import discord4j.core.DiscordClientBuilder;
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent;
 import discord4j.core.event.domain.lifecycle.ReadyEvent;
-import discord4j.core.object.command.ApplicationCommandInteractionOption;
-import discord4j.core.object.command.ApplicationCommandInteractionOptionValue;
 import discord4j.core.object.command.ApplicationCommandOption;
-import discord4j.core.spec.MessageCreateFields;
 import discord4j.discordjson.json.ApplicationCommandOptionData;
 import discord4j.discordjson.json.ApplicationCommandRequest;
 import discord4j.rest.RestClient;
-import io.nayuki.qrcodegen.QrCode;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -16,12 +12,11 @@ import java.util.Optional;
 
 public class Program {
     
-    private static final int QR_SCALE = 4;
-    private static final int QR_BORDER = 1;
-
     public static void main(String[] args) throws Exception {
         var token = Optional.ofNullable(System.getenv("TOKEN"))
                 .orElseThrow(() -> new Exception("Bot token not found."));
+        
+        var slashCommandHandler = new SlashCommandHandler();
 
         DiscordClientBuilder.create(token)
                 .build()
@@ -32,19 +27,7 @@ public class Program {
                             }))
                             .then();
 
-                    var handleSlash = gateway.on(ChatInputInteractionEvent.class, event -> {
-                                if (!event.getCommandName()
-                                        .equals("qr")) return Mono.empty();
-                                return event.getOption("text")
-                                        .flatMap(ApplicationCommandInteractionOption::getValue)
-                                        .map(ApplicationCommandInteractionOptionValue::asString)
-                                        .map(content -> QrCode.encodeText(content, QrCode.Ecc.LOW))
-                                        .flatMap(qr -> new QrToByteArrayInputStream().convert(qr, QR_SCALE, QR_BORDER, "png"))
-                                        .map(inputStream -> event.reply()
-                                                .withFiles(MessageCreateFields.File.of("QR.png", inputStream))
-                                                .then())
-                                        .orElse(Mono.empty());
-                            })
+                    var handleSlash = gateway.on(ChatInputInteractionEvent.class, slashCommandHandler::handle)
                             .then();
                     
                     registerCommands(gateway.getRestClient());
