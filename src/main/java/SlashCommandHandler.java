@@ -64,7 +64,7 @@ public class SlashCommandHandler {
         return event.getOption("name")
                 .flatMap(ApplicationCommandInteractionOption::getValue)
                 .map(ApplicationCommandInteractionOptionValue::asString)
-                .flatMap(name -> Optional.ofNullable(qrData.savedData.getOrDefault(name, null)))
+                .flatMap(qrData::retrieve)
                 .map(content -> QrCode.encodeText(content, QrCode.Ecc.LOW))
                 .flatMap(qr -> {
                     try {
