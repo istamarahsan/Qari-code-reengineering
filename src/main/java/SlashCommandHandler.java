@@ -29,7 +29,13 @@ public class SlashCommandHandler {
                 .flatMap(ApplicationCommandInteractionOption::getValue)
                 .map(ApplicationCommandInteractionOptionValue::asString)
                 .map(content -> QrCode.encodeText(content, QrCode.Ecc.LOW))
-                .flatMap(qr -> new QrToByteArrayInputStream().convert(qr, QR_SCALE, QR_BORDER, "png"))
+                .flatMap(qr -> {
+                    try {
+                        return (Optional.of(new QrToByteArrayInputStream().convert(qr, QR_SCALE, QR_BORDER, QrImgFormat.png)));
+                    } catch (Exception e) {
+                        return Optional.empty();
+                    }
+                })
                 .map(inputStream -> event.reply()
                         .withFiles(MessageCreateFields.File.of("QR.png", inputStream))
                         .then())
@@ -55,7 +61,13 @@ public class SlashCommandHandler {
                 .map(ApplicationCommandInteractionOptionValue::asString)
                 .flatMap(name -> Optional.ofNullable(qrData.savedData.getOrDefault(name, null)))
                 .map(content -> QrCode.encodeText(content, QrCode.Ecc.LOW))
-                .flatMap(qr -> new QrToByteArrayInputStream().convert(qr, QR_SCALE, QR_BORDER, "png"))
+                .flatMap(qr -> {
+                    try {
+                        return Optional.of(new QrToByteArrayInputStream().convert(qr, QR_SCALE, QR_BORDER, QrImgFormat.png));
+                    } catch (Exception e) {
+                        return Optional.empty();
+                    }
+                })
                 .map(inputStream -> event.reply()
                         .withFiles(MessageCreateFields.File.of("QR.png", inputStream))
                         .then())
