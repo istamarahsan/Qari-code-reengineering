@@ -6,12 +6,13 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-public class QrToByteArrayInputStream {
+public class QrToByteArrayInputStream implements QrImageEncoder {
     
     public QrToByteArrayInputStream() {
         
     }
     
+    @Override
     public ByteArrayInputStream convert(QrCode qr, int scale, int border, QrImgFormat ImgFormat) throws NullPointerException, IllegalArgumentException, IOException {
         if (qr == null) 
             throw new NullPointerException();

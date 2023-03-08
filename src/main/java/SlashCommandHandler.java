@@ -11,6 +11,11 @@ public class SlashCommandHandler {
     private static final int QR_SCALE = 4;
     private static final int QR_BORDER = 1;
     private final QrData qrData = new QrData();
+    private final QrImageEncoder converter;
+    
+    public SlashCommandHandler(QrImageEncoder converter) {
+        this.converter = converter;
+    }
 
     public Mono<Void> handle(ChatInputInteractionEvent event) {
         if (!event.getCommandName()
@@ -31,7 +36,7 @@ public class SlashCommandHandler {
                 .map(content -> QrCode.encodeText(content, QrCode.Ecc.LOW))
                 .flatMap(qr -> {
                     try {
-                        return (Optional.of(new QrToByteArrayInputStream().convert(qr, QR_SCALE, QR_BORDER, QrImgFormat.png)));
+                        return (Optional.of(converter.convert(qr, QR_SCALE, QR_BORDER, QrImgFormat.png)));
                     } catch (Exception e) {
                         return Optional.empty();
                     }
@@ -63,7 +68,7 @@ public class SlashCommandHandler {
                 .map(content -> QrCode.encodeText(content, QrCode.Ecc.LOW))
                 .flatMap(qr -> {
                     try {
-                        return Optional.of(new QrToByteArrayInputStream().convert(qr, QR_SCALE, QR_BORDER, QrImgFormat.png));
+                        return Optional.of(converter.convert(qr, QR_SCALE, QR_BORDER, QrImgFormat.png));
                     } catch (Exception e) {
                         return Optional.empty();
                     }

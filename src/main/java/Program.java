@@ -16,7 +16,7 @@ public class Program {
         var token = Optional.ofNullable(System.getenv("TOKEN"))
                 .orElseThrow(() -> new Exception("Bot token not found."));
         
-        var slashCommandHandler = new SlashCommandHandler();
+        var slashCommandHandler = new SlashCommandHandler(new QrToByteArrayInputStream());
 
         DiscordClientBuilder.create(token)
                 .build()
