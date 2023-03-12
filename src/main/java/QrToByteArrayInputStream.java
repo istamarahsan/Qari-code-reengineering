@@ -13,12 +13,14 @@ public class QrToByteArrayInputStream {
     }
     
     public Optional<ByteArrayInputStream> convert(QrCode qr, int scale, int border, String format) {
+        // Handle invalid inputs
         if (qr == null) 
             throw new NullPointerException();
         if (scale <= 0 || border < 0) 
             throw new IllegalArgumentException("Value out of range");
         if (border > Integer.MAX_VALUE / 2 || qr.size + border * 2L > Integer.MAX_VALUE / scale)
             throw new IllegalArgumentException("Scale or border too large");
+        // We only support PNG here
         if (!format.equals("png"))
             throw new IllegalArgumentException();
         BufferedImage img = new BufferedImage((qr.size + border * 2) * scale, (qr.size + border * 2) * scale, BufferedImage.TYPE_INT_RGB);
@@ -28,7 +30,11 @@ public class QrToByteArrayInputStream {
                 img.setRGB(x, y, color ? 0x000000 : 0xFFFFFF);
             }
         }
+        // how we do this is take the image, write it into a byte array output stream, and then create a byte array input stream from it
+        // idk how else to do it 💀
+        
         final var os = new ByteArrayOutputStream();
+        // writing the image can fail.
         try {
             ImageIO.write(img, format, os);
         } catch (IOException e) {

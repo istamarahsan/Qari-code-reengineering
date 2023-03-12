@@ -1,6 +1,7 @@
 import java.util.HashMap;
 import java.util.Map;
 
+// class that acts as our data access layer
 public class QrData {
     public Map<String, String> savedData = new HashMap<>();
     

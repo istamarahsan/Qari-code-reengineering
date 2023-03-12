@@ -15,9 +15,11 @@ public class Program {
     public static void main(String[] args) throws Exception {
         var token = Optional.ofNullable(System.getenv("TOKEN"))
                 .orElseThrow(() -> new Exception("Bot token not found."));
+        // You shouldn't need to change anything above this
         
         var slashCommandHandler = new SlashCommandHandler();
 
+        // You shouldn't need to change anything below this
         DiscordClientBuilder.create(token)
                 .build()
                 .withGateway(gateway -> {
